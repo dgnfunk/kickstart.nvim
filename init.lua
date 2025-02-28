@@ -88,10 +88,10 @@ vim.g.netrw_banner = 0 -- Hide the banner
 vim.g.netrw_liststyle = 3 -- Use a tree-like view
 vim.g.netrw_winsize = 20 -- Set explorer width
 vim.g.netrw_altv = 1 -- Open in right vertical split
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
-vim.opt.softtabstop = 4
+vim.opt.softtabstop = 2
 vim.opt.spell = true -- Enable spell checking
 vim.opt.spelllang = 'en' -- Set spell check language to English
 vim.opt.foldmethod = 'indent' -- Fold based on indentation
@@ -268,12 +268,18 @@ require('lazy').setup({
       },
       signs = {
         add = { text = '+' },
-        change = { text = 'Ͼ' },
+        change = { text = '|' },
         delete = { text = '' },
-        topdelete = { text = '‾' },
-        changedelete = { text = 'Ͼ' },
+        topdelete = { text = '||' },
+        changedelete = { text = '|||' },
       },
     },
+  },
+  -- Multi selection plugin in, like using vscode cmd/ctrl + d but instead using ctl+n and then n to select more
+  -- matching string to add a cursor there.
+  {
+    'mg979/vim-visual-multi',
+    branch = 'master',
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -425,7 +431,7 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sa', builtin.find_files, { desc = '[S]earch [A]ll Files' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
@@ -443,14 +449,20 @@ require('lazy').setup({
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
 
-      -- It's also possible to pass additional configuration options.
-      --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', '<leader>s/', function()
+      vim.keymap.set('n', '<leader>sf', function()
         builtin.live_grep {
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
       end, { desc = '[S]earch [/] in Open Files' })
+
+      -- It's also possible to pass additional configuration options.
+      --  See `:help telescope.builtin.live_grep()` for information about particular keys
+      vim.keymap.set('n', '<leader>sf', function()
+        builtin.find_files {
+          search_dirs = { vim.fn.expand '%:p:h' },
+        }
+      end, { desc = '[S]earch [F]iles in Parent', noremap = true, silent = true })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function()
