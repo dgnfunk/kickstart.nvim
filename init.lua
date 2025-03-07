@@ -437,7 +437,9 @@ require('lazy').setup({
         -- pickers = {}
         extensions = {
           ['file_browser'] = {
-            theme = 'tokyonight',
+            theme = 'ivy',
+            hidden = { file_browser = true, folder_browser = true },
+
             hijack_netrw = true,
           },
           ['ui-select'] = {
