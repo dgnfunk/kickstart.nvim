@@ -439,7 +439,6 @@ require('lazy').setup({
           ['file_browser'] = {
             theme = 'ivy',
             hidden = { file_browser = true, folder_browser = true },
-
             hijack_netrw = true,
           },
           ['ui-select'] = {
@@ -482,6 +481,11 @@ require('lazy').setup({
           prompt_title = 'Live Grep in Open Files',
         }
       end, { desc = '[S]earch [/] in Open Files' })
+
+      vim.keymap.set('n', '<leader>B', ':Telescope file_browser<CR>', { desc = '[B]rowse All Files' })
+
+      -- open file_browser with the path of the current buffer
+      vim.keymap.set('n', '<leader>b', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[B]rowse Files in Current Folder' })
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
