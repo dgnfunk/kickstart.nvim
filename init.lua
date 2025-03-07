@@ -436,6 +436,10 @@ require('lazy').setup({
         -- },
         -- pickers = {}
         extensions = {
+          ['file_browser'] = {
+            theme = 'tokyonight',
+            hijack_netrw = true,
+          },
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
@@ -445,6 +449,8 @@ require('lazy').setup({
       -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
+
+      require('telescope').load_extension 'file_browser'
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
@@ -456,7 +462,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("" for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
@@ -488,6 +494,10 @@ require('lazy').setup({
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
     end,
+  },
+  {
+    'nvim-telescope/telescope-file-browser.nvim',
+    dependencies = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
   },
 
   -- LSP Plugins
@@ -998,19 +1008,19 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
-  {
-    'prichrd/netrw.nvim',
-    opts = {},
-    config = function()
-      require('netrw').setup {
-
-        mappings = {
-          -- String mappings are executed as vim commands
-          ['<Leader>p'] = ':Explore<CR>',
-        },
-      }
-    end,
-  },
+  -- {
+  --   'prichrd/netrw.nvim',
+  --   opts = {},
+  --   config = function()
+  --     require('netrw').setup {
+  --
+  --       mappings = {
+  --         -- String mappings are executed as vim commands
+  --         ['<Leader>p'] = ':Explore<CR>',
+  --       },
+  --     }
+  --   end,
+  -- },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
