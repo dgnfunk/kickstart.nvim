@@ -205,6 +205,15 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.api.nvim_set_keymap('n', '<leader>ta', ':$tabnew<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>tc', ':tabclose<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>to', ':tabonly<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>tn', ':tabn<CR>', { noremap = true })
+vim.api.nvim_set_keymap('n', '<leader>tp', ':tabp<CR>', { noremap = true })
+-- move current tab to previous position
+vim.api.nvim_set_keymap('n', '<leader>tmp', ':-tabmove<CR>', { noremap = true })
+-- move current tab to next position
+vim.api.nvim_set_keymap('n', '<leader>tmn', ':+tabmove<CR>', { noremap = true })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -297,6 +306,20 @@ require('lazy').setup({
   {
     'mg979/vim-visual-multi',
     branch = 'master',
+  },
+  {
+    'nanozuki/tabby.nvim',
+    lazy = false,
+    config = function()
+      require('tabby').setup {
+        preset = 'active_wins_at_tail',
+        nerdfont = true, -- whether use nerdfont
+      }
+      vim.o.showtabline = 2
+    end,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -465,6 +488,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("" for repeat)' })
       vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader>B', ':Telescope file_browser<CR>', { desc = '[B]rowse All Files' })
+      -- open file_browser with the path of the current buffer
+      vim.keymap.set('n', '<leader>b', ':Telescope file_browser path=%:p:h select_buffer=true<CR>', { desc = '[B]rowse Files in Current Folder' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -687,6 +713,27 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         pyright = {},
+        cssls = {},
+        tailwindcss = {
+          filetypes = {
+            'html',
+            'css',
+            'scss',
+            'javascript',
+            'javascriptreact',
+            'typescript',
+            'typescriptreact',
+            'svelte',
+            'vue',
+            'markdown',
+          },
+          init_options = {
+            userLanguages = {
+              eelixir = 'html', -- for Phoenix
+              eruby = 'html', -- for Ruby on Rails
+            },
+          },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -729,6 +776,8 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'css-lsp',
+        'tailwindcss-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -811,6 +860,8 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        tailwind = { 'tailwindcss' },
       },
     },
   },
@@ -985,6 +1036,10 @@ require('lazy').setup({
         return '%2l:%-2v'
       end
 
+      statusline.section_filename = function()
+        return '' -- don't show filename at all
+      end
+
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
@@ -1042,7 +1097,7 @@ require('lazy').setup({
   require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
-  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
